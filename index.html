@@ -739,27 +739,10 @@
         gtag('js', new Date());
         gtag('config', 'GA_MEASUREMENT_ID');
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script><!-- 在 </body> 前添加 -->
-<script src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
-<script>
-window.addEventListener('load', function() {
-  if (typeof L2Dwidget !== 'undefined') {
-    L2Dwidget.init({
-      model: {
-        jsonPath: 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/assets/shizuku.model.json',
-      },
-      display: {
-        position: 'right',
-        width: 150,
-        height: 300,
-      },
-      mobile: {
-        show: true,
-      },
-    });
-  }
-});
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID">
+    </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"> 
+<script src="https://fastly.jsdelivr.net/gh/lrplrplrp/bkyl2d@main/loads.js"></script>
+
 
 
 </body>

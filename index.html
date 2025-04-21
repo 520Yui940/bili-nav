@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>哔哩粉导航 | ✨大黑塔资源聚合</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <style>
+        :root {
+            --primary: #FF69B4;
+            --secondary: #FF1493;
+            --bg: #FFF0F5;
+            --card-bg: #FFFFFF;
+            --text: #4A4A4A;
+            --shadow: 0 4px 20px rgba(255,105,180,0.15);
+            --radius: 16px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1a1a1a;
+                --card-bg: #2d2d2d;
+                --text: #ffffff;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'HarmonyOS Sans', 'MiSans', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.3s;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-weight: 700;
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.95);
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .category-nav {
+            position: sticky;
+            top: 76px;
+            background: var(--bg);
+            padding: 1rem 0;
+            z-index: 999;
+            margin: 2rem 0;
+            backdrop-filter: blur(8px);
+        }
+
+        .category-buttons {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.8rem;
+            overflow-x: auto;
+            padding: 0 1rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        .category-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,105,180,0.1);
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 3px 12px rgba(255,105,180,0.3);
+        }
+
+        .category-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .grid-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .website-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-decoration: none;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.6s ease-out;
+        }
+
+        .website-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary) 0%, transparent 100%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .website-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255,105,180,0.2);
+        }
+
+        .website-card:hover::before {
+            opacity: 0.08;
+        }
+
+        .icon-container {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            background: rgba(255,105,180,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .icon-image {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+            transition: var(--transition);
+        }
+
+        .fallback-icon {
+            position: absolute;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .settings-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: none;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .settings-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            z-index: 1001;
+            width: min(95%, 500px);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .settings-content {
+            display: grid;
+            gap: 1.5rem;
+            padding: 1rem 0;
+        }
+
+        .setting-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .setting-item label {
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .theme-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .theme-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+            background: #FFF0F5;
+        }
+
+        .theme-preview.dark {
+            background: #1a1a1a;
+        }
+
+        .theme-preview.active {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(255, 105, 180, 0.2);
+        }
+
+        .layout-options {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .layout-preview {
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .layout-preview.active {
+            background: rgba(255, 105, 180, 0.1);
+            transform: scale(1.05);
+        }
+
+        #fontSize {
+            width: 100%;
+            accent-color: var(--primary);
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-input {
+                padding: 0.7rem 1.2rem;
+            }
+
+            .icon-container {
+                width: 40px;
+                height: 40px;
+            }
+
+            .website-card {
+                padding: 1rem;
+            }
+
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(90%, 1fr));
+            }
+            
+            .category-nav {
+                top: 64px;
+                padding: 0.5rem 0;
+            }
+
+            .settings-btn {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .setting-item {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-preview {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">哔哩导航</div>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="搜索你需要的资源...">
+            </div>
+        </nav>
+    </header>
+
+    <nav class="category-nav">
+        <div class="category-buttons" id="category-buttons"></div>
+    </nav>
+
+    <main class="grid-container" id="websites-container"></main>
+
+    <button class="settings-btn" aria-label="网站设置">⚙️</button>
+
+    <script>
+        const websiteManager = {
+            data: {
+                websites: [
+                    {
+                        title: '哔哩哔哩',
+                        url: 'https://www.bilibili.com',
+                        categories: ['video', 'community'],
+                        favicon: 'https://www.bilibili.com/favicon.ico',
+                        desc: '弹幕视频分享平台'
+                    },
+                    {
+                        title: 'Figma设计',
+                        url: 'https://figma.com',
+                        categories: ['design', 'tools'],
+                        favicon: 'https://static.figma.com/app/icon/1/favicon.png',
+                        desc: '在线协作设计工具'
+                    },
+                    {
+                        title: 'GitHub',
+                        url: 'https://github.com',
+                        categories: ['dev', 'tools'],
+                        favicon: 'https://github.githubassets.com/favicons/favicon.png',
+                        desc: '代码托管平台'
+                    },
+                    {
+                        title: 'MDN Web Docs',
+                        url: 'https://developer.mozilla.org',
+                        categories: ['dev', 'documentation'],
+                        favicon: 'https://developer.mozilla.org/favicon.ico',
+                        desc: 'Web开发文档'
+                    },
+                    {
+                        title: 'CodePen',
+                        url: 'https://codepen.io',
+                        categories: ['dev', 'tools'],
+                        favicon: 'https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico',
+                        desc: '前端代码实验平台'
+                    }
+                ],
+                categories: {}
+            },
+
+            currentSearchKeyword: '',
+
+            settings: {
+                theme: 'system',
+                layout: 'grid',
+                fontSize: 16,
+                
+                load() {
+                    const saved = localStorage.getItem('nav-settings');
+                    if (saved) {
+                        try {
+                            Object.assign(this, JSON.parse(saved));
+                            this.fontSize = Math.max(12, Math.min(20, this.fontSize));
+                        } catch(e) {}
+                    }
+                },
+                
+                save() {
+                    localStorage.setItem('nav-settings', JSON.stringify({
+                        theme: this.theme,
+                        layout: this.layout,
+                        fontSize: this.fontSize
+                    }));
+                },
+                
+                apply() {
+                    const isDark = this.theme === 'dark' || 
+                                  (this.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                    
+                    document.documentElement.style.setProperty('--bg', isDark ? '#1a1a1a' : '#FFF0F5');
+                    document.documentElement.style.setProperty('--card-bg', isDark ? '#2d2d2d' : '#FFFFFF');
+                    document.documentElement.style.setProperty('--text', isDark ? '#ffffff' : '#4A4A4A');
+                    
+                    const gridContainer = document.querySelector('.grid-container');
+                    gridContainer.style.gridTemplateColumns = this.layout === 'list' 
+                        ? 'repeat(auto-fill, minmax(100%, 1fr))' 
+                        : 'repeat(auto-fill, minmax(280px, 1fr))';
+                    
+                    document.documentElement.style.fontSize = this.fontSize + 'px';
+                }
+            },
+
+            init() {
+                this.settings.load();
+                this.settings.apply();
+                this.calculateCategories();
+                this.generateCategoryButtons();
+                this.bindEvents();
+                this.syncStateFromURL();
+                this.renderWebsites();
+
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(registration => {
+                            console.log('ServiceWorker注册成功:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.log('ServiceWorker注册失败:', error);
+                        });
+                }
+            },
+
+            calculateCategories() {
+                this.data.categories = this.data.websites.reduce((acc, site) => {
+                    site.categories.forEach(cat => {
+                        acc[cat] = (acc[cat] || 0) + 1;
+                    });
+                    return acc;
+                }, {});
+            },
+
+            generateCategoryButtons() {
+                const container = document.getElementById('category-buttons');
+                container.innerHTML = '';
+                
+                const allButton = this.createCategoryButton('all', this.data.websites.length);
+                allButton.classList.add('active');
+                container.appendChild(allButton);
+
+                Object.entries(this.data.categories).forEach(([category, count]) => {
+                    const button = this.createCategoryButton(category, count);
+                    container.appendChild(button);
+                });
+            },
+
+            createCategoryButton(category, count) {
+                const button = document.createElement('button');
+                button.className = 'category-btn';
+                button.dataset.category = category;
+                button.textContent = `${this.formatCategoryName(category)} (${count})`;
+                return button;
+            },
+
+            formatCategoryName(category) {
+                const names = {
+                    'all': '全部',
+                    'video': '视频',
+                    'community': '社区',
+                    'design': '设计',
+                    'tools': '工具',
+                    'dev': '开发',
+                    'documentation': '文档'
+                };
+                return names[category] || category;
+            },
+
+            bindEvents() {
+                document.getElementById('category-buttons').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('category-btn')) {
+                        this.handleCategoryChange(e.target.dataset.category);
+                    }
+                });
+
+                const searchInput = document.querySelector('.search-input');
+                searchInput.addEventListener('input', debounce((e) => {
+                    this.handleSearch(e.target.value.trim());
+                }, 300));
+
+                document.querySelector('.settings-btn').addEventListener('click', () => {
+                    this.showSettingsPanel();
+                });
+
+                window.addEventListener('popstate', () => {
+                    this.syncStateFromURL();
+                });
+            },
+
+            handleCategoryChange(selectedCategory) {
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.category === selectedCategory);
+                });
+                this.renderWebsites(selectedCategory, this.currentSearchKeyword);
+                this.updateURLState(selectedCategory, this.currentSearchKeyword);
+            },
+
+            handleSearch(keyword) {
+                this.currentSearchKeyword = keyword;
+                const activeCategory = document.querySelector('.category-btn.active').dataset.category;
+                this.renderWebsites(activeCategory, keyword);
+                this.updateURLState(activeCategory, keyword);
+            },
+
+            advancedSearch(keyword) {
+                const searchKeys = keyword.split(/\s+/).filter(Boolean);
+                return this.data.websites.filter(site => {
+                    const content = `${site.title} ${site.desc}`.toLowerCase();
+                    return searchKeys.every(k => content.includes(k.toLowerCase()));
+                });
+            },
+
+            updateURLState(category, keyword) {
+                const params = new URLSearchParams();
+                if (category !== 'all') params.set('category', category);
+                if (keyword) params.set('q', keyword);
+                history.replaceState(null, '', `?${params.toString()}`);
+            },
+
+            syncStateFromURL() {
+                const params = new URLSearchParams(location.search);
+                const category = params.get('category') || 'all';
+                const keyword = params.get('q') || '';
+                
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.category === category);
+                });
+                document.querySelector('.search-input').value = keyword;
+                
+                this.renderWebsites(category, keyword);
+            },
+
+            renderWebsites(category = 'all', keyword = '') {
+                const container = document.getElementById('websites-container');
+                container.innerHTML = '';
+
+                let filtered;
+                if (keyword.includes(' ')) {
+                    filtered = this.advancedSearch(keyword).filter(site => {
+                        return category === 'all' || site.categories.includes(category);
+                    });
+                } else {
+                    filtered = this.data.websites.filter(site => {
+                        const categoryMatch = category === 'all' || site.categories.includes(category);
+                        const keywordLower = keyword.toLowerCase();
+                        const keywordMatch = 
+                            site.title.toLowerCase().includes(keywordLower) || 
+                            site.desc.toLowerCase().includes(keywordLower);
+                        return categoryMatch && keywordMatch;
+                    });
+                }
+
+                filtered.forEach(site => {
+                    const card = document.createElement('a');
+                    card.className = 'website-card';
+                    card.href = site.url;
+                    card.target = '_blank';
+                    card.rel = 'noopener noreferrer';
+                    card.innerHTML = `
+                        <div class="icon-container">
+                            <img src="${site.favicon}" 
+                                class="icon-image" 
+                                alt="${site.title}图标"
+                                onerror="this.style.opacity='0';this.nextElementSibling.style.display='flex'">
+                            <div class="fallback-icon">${site.title.slice(0,2)}</div>
+                        </div>
+                        <div class="card-content">
+                            <h3>${site.title}</h3>
+                            <p>${site.desc}</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+
+            showSettingsPanel() {
+                // 修复代码：移除所有现存面板
+                document.querySelectorAll('.settings-panel').forEach(panel => panel.remove());
+
+                this.settings.load();
+                
+                const panel = document.createElement('div');
+                panel.className = 'settings-panel';
+                panel.innerHTML = `
+                    <h3>网站设置</h3>
+                    <button class="close-btn">×</button>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <label>主题模式：</label>
+                            <div class="theme-options">
+                                <div class="theme-preview ${this.settings.theme === 'system' ? 'active' : ''}" 
+                                    data-theme="system" title="跟随系统">
+                                    <div style="width:100%;height:100%;border-radius:8px;background:linear-gradient(45deg, #FFF0F5 50%, #1a1a1a 50%)"></div>
+                                </div>
+                                <div class="theme-preview ${this.settings.theme === 'light' ? 'active' : ''}" 
+                                    data-theme="light"></div>
+                                <div class="theme-preview dark ${this.settings.theme === 'dark' ? 'active' : ''}" 
+                                    data-theme="dark"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>布局模式：</label>
+                            <div class="layout-options">
+                                <div class="layout-preview ${this.settings.layout === 'grid' ? 'active' : ''}" 
+                                    data-layout="grid" style="width: 80px;height: 60px;">
+                                    <div style="display:grid;gap:4px;height:100%;">
+                                        <div style="background:var(--primary);border-radius:4px;"></div>
+                                        <div style="background:var(--primary);border-radius:4px;"></div>
+                                    </div>
+                                </div>
+                                <div class="layout-preview ${this.settings.layout === 'list' ? 'active' : ''}" 
+                                    data-layout="list" style="width: 80px;height: 60px;">
+                                    <div style="background:var(--primary);border-radius:4px;height:100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label>字号调整：</label>
+                            <input type="range" id="fontSize" min="12" max="20" 
+                                value="${this.settings.fontSize}" 
+                                style="accent-color: var(--primary);">
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(panel);
+
+                panel.querySelectorAll('.theme-preview').forEach(preview => {
+                    preview.addEventListener('click', () => {
+                        this.settings.theme = preview.dataset.theme;
+                        this.settings.apply();
+                        this.settings.save();
+                        panel.querySelectorAll('.theme-preview').forEach(p => p.classList.remove('active'));
+                        preview.classList.add('active');
+                    });
+                });
+
+                panel.querySelectorAll('.layout-preview').forEach(preview => {
+                    preview.addEventListener('click', () => {
+                        this.settings.layout = preview.dataset.layout;
+                        this.settings.apply();
+                        this.settings.save();
+                        panel.querySelectorAll('.layout-preview').forEach(p => p.classList.remove('active'));
+                        preview.classList.add('active');
+                    });
+                });
+
+                panel.querySelector('#fontSize').addEventListener('input', (e) => {
+                    this.settings.fontSize = e.target.value;
+                    this.settings.apply();
+                    this.settings.save();
+                });
+
+                panel.querySelector('.close-btn').addEventListener('click', () => panel.remove());
+                panel.addEventListener('click', (e) => e.target === panel && panel.remove());
+            }
+        };
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            websiteManager.init();
+        });
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+</body>
+</html>

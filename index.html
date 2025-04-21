@@ -740,10 +740,38 @@
         gtag('config', 'GA_MEASUREMENT_ID');
     </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID">
-    </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"> 
-<script src="https://fastly.jsdelivr.net/gh/lrplrplrp/bkyl2d@main/loads.js"></script>
-
-
+        <!-- ======= 在 </body> 前面添加这段代码 ======= -->
+<!-- Live2D 看板娘加载 -->
+<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+<script>
+window.addEventListener('load', function() {
+    if (typeof L2Dwidget !== 'undefined') {
+        L2Dwidget.init({
+            model: {
+                jsonPath: 'https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/assets/shizuku.model.json',
+                scale: 1
+            },
+            display: {
+                position: 'right',
+                width: 180,
+                height: 360,
+                hOffset: 0,
+                vOffset: -20
+            },
+            mobile: {
+                show: true,
+                scale: 0.7
+            },
+            react: {
+                opacityDefault: 0.7,
+                opacityOnHover: 0.8
+            }
+        });
+    } else {
+        console.error("Live2D 加载失败！请检查网络或CDN。");
+    }
+});
+</script>
 
 </body>
 </html>

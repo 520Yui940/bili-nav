@@ -738,11 +738,9 @@
         function gtag(){ dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'GA_MEASUREMENT_ID');
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID">
-        
-    <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
-    <script>
+        <!-- 在 </body> 标签前添加以下代码 -->
+<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+<script>
 window.addEventListener('load', function() {
     if (typeof L2Dwidget !== 'undefined') {
         L2Dwidget.init({
@@ -771,6 +769,7 @@ window.addEventListener('load', function() {
     }
 });
 </script>
+    
 
 </body>
 </html>

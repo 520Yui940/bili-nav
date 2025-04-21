@@ -742,6 +742,29 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"> 
     <script src="https://fastly.jsdelivr.net/gh/520Yui940/bkyl2d@master/">
-    </script><script src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+    <!-- 引入 Live2D 主脚本 -->
+
+
+<!-- 初始化模型 -->
+<script>
+  L2Dwidget.init({
+    model: {
+      jsonPath: "https://unpkg.com/live2d-widget-model-hijiki@1.0.5/assets/hijiki.model.json"
+    },
+    display: {
+      position: "right",  // 右下角
+      width: 100,
+      height: 200
+    },
+    mobile: {
+      show: true,
+      scale: 0.5
+    },
+    react: {
+      opacityDefault: 0.8,
+      opacityOnHover: 0.2
+    }
+  });
+    </script>
 </body>
 </html>

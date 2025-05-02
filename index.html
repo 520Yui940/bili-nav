@@ -3,9 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>哔哩粉导航 | ✨大黑塔资源聚合</title>
+    <title>大黑塔导航 | ✨大黑塔资源聚合</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <style>
+        /* 新增全屏背景样式 */
+        .fullscreen-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -100;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://s21.ax1x.com/2025/05/02/pEburv9.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(12px) brightness(0.7);
+            transform: scale(1.05);
+        }
+        
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 192, 203, 0.15);
+        }
+
+        /* 加载提示 */
+        .loading-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            z-index: 10000;
+            display: none;
+        }
+
+        /* 修改原有body样式 */
+        body {
+            background: #FFF0F5; /* 默认背景色 */
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 暗黑模式适配 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1a1a1a;
+                --card-bg: #2d2d2d;
+                --text: #ffffff;
+            }
+            .bg-overlay {
+                background: rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* 毛玻璃核心样式 */
         :root {
             --primary: #FF69B4;
             --secondary: #FF1493;
@@ -15,14 +85,8 @@
             --shadow: 0 4px 20px rgba(255,105,180,0.15);
             --radius: 16px;
             --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #1a1a1a;
-                --card-bg: #2d2d2d;
-                --text: #ffffff;
-            }
+            --glass-blur: 10px;
+            --glass-opacity: 0.7;
         }
 
         * {
@@ -32,15 +96,22 @@
             font-family: 'HarmonyOS Sans', 'MiSans', sans-serif;
         }
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            transition: background-color 0.3s;
+        /* 毛玻璃应用元素 */
+        .header,
+        .website-card,
+        .category-nav,
+        .settings-panel,
+        .settings-btn,
+        .icon-container {
+            background: rgba(var(--card-bg), var(--glass-opacity)) !important;
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: rgba(255, 255, 255, 0.7) !important;
             padding: 1rem;
             position: sticky;
             top: 0;
@@ -57,7 +128,7 @@
         }
 
         .logo {
-            color: white;
+            color: var(--primary);
             font-weight: 700;
             font-size: 1.8rem;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -87,7 +158,6 @@
             padding: 1rem 0;
             z-index: 999;
             margin: 2rem 0;
-            backdrop-filter: blur(8px);
         }
 
         .category-buttons {
@@ -143,10 +213,8 @@
         }
 
         .website-card {
-            background: var(--card-bg);
             border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: var(--shadow);
             transition: var(--transition);
             text-decoration: none;
             display: flex;
@@ -182,7 +250,6 @@
             width: 48px;
             height: 48px;
             min-width: 48px;
-            background: rgba(255,105,180,0.1);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -210,6 +277,13 @@
             height: 100%;
         }
 
+        .card-content {
+            flex: 1;
+            background: rgba(255,255,255,0.3);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
         .settings-btn {
             position: fixed;
             bottom: 2rem;
@@ -217,15 +291,13 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: var(--card-bg);
-            border: none;
-            box-shadow: var(--shadow);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            z-index: 999;
         }
 
         .settings-btn:hover {
@@ -237,10 +309,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: var(--card-bg);
             padding: 1.5rem;
             border-radius: var(--radius);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             z-index: 1001;
             width: min(95%, 500px);
             max-height: 90vh;
@@ -368,6 +438,16 @@
     </style>
 </head>
 <body>
+    <!-- 加载提示 -->
+    <div class="loading-message" id="loadingMessage">正在加载背景...</div>
+
+    <!-- 全屏背景 -->
+    <div class="fullscreen-bg" id="fullscreenBg">
+        <div class="bg-image" id="bgImage"></div>
+        <div class="bg-overlay"></div>
+    </div>
+
+    <!-- 原有页面内容 -->
     <header class="header">
         <nav class="nav-container">
             <div class="logo">哔哩导航</div>
@@ -386,6 +466,64 @@
     <button class="settings-btn" aria-label="网站设置">⚙️</button>
 
     <script>
+        // 安全加载背景图片
+        function loadBackground() {
+            const loadingMsg = document.getElementById('loadingMessage');
+            const bgContainer = document.getElementById('fullscreenBg');
+            const bgImage = document.getElementById('bgImage');
+            
+            loadingMsg.style.display = 'block';
+            
+            // 使用预加载确保图片加载完成
+            const img = new Image();
+            img.src = 'https://s21.ax1x.com/2025/05/02/pEburv9.png';
+            
+            img.onload = function() {
+                bgImage.style.backgroundImage = `url('${img.src}')`;
+                bgContainer.style.display = 'block';
+                loadingMsg.style.display = 'none';
+                protectBackground();
+            };
+            
+            img.onerror = function() {
+                console.error('背景图片加载失败，使用默认背景');
+                loadingMsg.textContent = '背景加载失败，使用默认背景';
+                setTimeout(() => {
+                    loadingMsg.style.display = 'none';
+                }, 2000);
+                protectBackground();
+            };
+        }
+        
+        // 保护背景不被修改
+        function protectBackground() {
+            const bgElement = document.getElementById('fullscreenBg');
+            if (!bgElement) return;
+            
+            try {
+                Object.freeze(bgElement.style);
+                
+                Object.defineProperty(bgElement, 'innerHTML', {
+                    set: function() {
+                        console.warn('背景元素受保护，禁止修改');
+                        return false;
+                    },
+                    configurable: false
+                });
+                
+                Object.defineProperty(bgElement.parentNode, 'removeChild', {
+                    value: function() {
+                        console.warn('背景元素受保护，禁止删除');
+                        return null;
+                    },
+                    configurable: false
+                });
+            } catch (e) {
+                console.error('背景保护设置失败:', e);
+            }
+        }
+
+        // 原有网站管理器
         const websiteManager = {
             data: {
                 websites: [
@@ -495,55 +633,6 @@
                         desc: '互联网网页存档查询'
                     },
                     {
-                        title: 'ROAR视频解析',
-                        url: 'https://roar.iiilab.com/',
-                        categories: ['video', 'tools'],
-                        favicon: 'https://roar.iiilab.com/favicon.ico',
-                        desc: '无水印视频下载解析'
-                    },
-                    {
-                        title: 'Aconvert转换器',
-                        url: 'https://www.aconvert.com/cn/audio/mp4-to-mp3/',
-                        categories: ['tools', 'converter'],
-                        favicon: 'https://www.aconvert.com/favicon.ico',
-                        desc: '在线音视频格式转换'
-                    },
-                    {
-                        title: 'Suno AI音乐',
-                        url: 'https://suno.com/',
-                        categories: ['music', 'ai'],
-                        favicon: 'https://suno.com/favicon.ico',
-                        desc: 'AI生成音乐创作平台'
-                    },
-                    {
-                        title: 'RemoveBG',
-                        url: 'https://www.remove.bg/',
-                        categories: ['design', 'tools'],
-                        favicon: 'https://www.remove.bg/favicon.ico',
-                        desc: '在线图片背景去除工具'
-                    },
-                    {
-                        title: 'TinyPNG',
-                        url: 'https://tinypng.com/',
-                        categories: ['design', 'tools'],
-                        favicon: 'https://tinypng.com/images/favicon.ico',
-                        desc: '智能PNG/JPG图片压缩'
-                    },
-                    {
-                        title: 'ProcessOn',
-                        url: 'https://www.processon.com/',
-                        categories: ['design', 'tools'],
-                        favicon: 'https://www.processon.com/favicon.ico',
-                        desc: '在线流程图制作工具'
-                    },
-                    {
-                        title: 'Canva可画',
-                        url: 'https://www.canva.cn/',
-                        categories: ['design', 'tools'],
-                        favicon: 'https://static.canva.cn/static/images/favicon.ico',
-                        desc: '在线平面设计平台'
-                    },
-                    {
                         title: 'WolframAlpha',
                         url: 'https://www.wolframalpha.com/',
                         categories: ['education', 'tools'],
@@ -592,6 +681,7 @@
             },
 
             init() {
+                loadBackground();
                 this.settings.load();
                 this.settings.apply();
                 this.calculateCategories();
@@ -600,7 +690,6 @@
                 this.syncStateFromURL();
                 this.renderWebsites();
 
-                // 可选：注册Service Worker
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.register('/sw.js')
                         .then(registration => {
@@ -784,7 +873,6 @@
             },
 
             showSettingsPanel() {
-                // 移除所有现存面板
                 document.querySelectorAll('.settings-panel').forEach(panel => panel.remove());
 
                 this.settings.load();
@@ -827,7 +915,6 @@
 
                 document.body.appendChild(panel);
 
-                // 主题选择
                 panel.querySelectorAll('.theme-preview').forEach(preview => {
                     preview.addEventListener('click', () => {
                         this.settings.theme = preview.dataset.theme;
@@ -838,7 +925,6 @@
                     });
                 });
 
-                // 布局选择
                 panel.querySelectorAll('.layout-preview').forEach(preview => {
                     preview.addEventListener('click', () => {
                         this.settings.layout = preview.dataset.layout;
@@ -849,7 +935,6 @@
                     });
                 });
 
-                // 字号调整
                 const fontSizeInput = panel.querySelector('#fontSize');
                 fontSizeInput.addEventListener('input', (e) => {
                     this.settings.fontSize = e.target.value;
@@ -861,10 +946,8 @@
                     this.settings.save();
                 });
 
-                // 关闭按钮
                 panel.querySelector('.close-btn').addEventListener('click', () => panel.remove());
                 
-                // 点击外部关闭
                 panel.addEventListener('click', (e) => {
                     if (e.target === panel) {
                         panel.remove();

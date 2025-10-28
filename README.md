@@ -1,7 +1,7 @@
 # 哔哩粉导航 ✨
 
 > **190 次 commit，6 个月只为调好那一抹 #FFB3CA**  
-> 由 **DeepSeek 一键生成**，经 **@520Yui940** 手工打磨成极简粉色美学  
+> 由 **前期由Deepseek生成骨架，功能润色交给GLM-4.6**，经 **@520Yui940** 手工打磨成极简粉色美学  
 > 一个 HTML 搞定：搜索、收藏、暗黑、PWA
 
 [在线体验](https://520yui940.github.io/bili-nav) · [Star 粉色](https://github.com/520Yui940/bili-nav)

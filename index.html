@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="zh-CN" translate="no">
+<head>
+    <!-- 基础元数据 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="theme-color" content="#6A5ACD">
+    <meta name="google" content="notranslate">
+    <meta name="description" content="昔涟导航 - 精选资源导航站，为您提供常用网站、学习资源、娱乐休闲等分类导航">
+    <meta name="keywords" content="昔涟导航,导航,网站导航,资源导航,常用网站,学习资源,娱乐休闲">
+    
+    <!-- PWA相关 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="昔涟导航">
+    <link rel="apple-touch-icon" href="https://example.com/logo.png">
+    <link rel="shortcut icon" href="https://example.com/favicon.ico">
+    
+    <title>昔涟✨导航 | 精选资源导航站</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- QRCode.js -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
+    <!-- 样式 -->
+    <style>
+        :root {
+            --main-color: #FFB3CA;
+            --active-color: #9370DB;
+            --text-light: #131112;
+            --text-dark: #FFB3CA;
+            --bg-light: rgba(255, 255, 255, 0.1);
+            --bg-dark: rgba(32, 36, 37, 0.8);
+            --card-light: rgba(255, 255, 255, 0.9);
+            --card-dark: rgba(50, 50, 50, 0.9);
+            --search-light: rgba(255, 255, 255, 0.95);
+            --search-dark: rgba(50, 50, 50, 0.95);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --border-radius: 16px;
+            --card-style: modern;
+            --animation-style: smooth;
+            --layout-style: grid;
+            --card-opacity: 0.9;
+            --card-border-radius: 16px;
+            --card-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            --blur-strength: 2px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 背景样式 */
+        .light-mode {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            color: var(--text-light);
+            background-image: url('https://picsum.photos/seed/dahetanav-light/1920/1080.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        .dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            background-image: url('https://picsum.photos/seed/dahetanav-dark/1920/1080.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        /* 背景遮罩 */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.08);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .dark-mode .bg-overlay {
+            background: rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 毛玻璃容器 */
+        .glass-container {
+            background: var(--bg-light);
+            backdrop-filter: blur(var(--blur-strength));
+            -webkit-backdrop-filter: blur(var(--blur-strength));
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .dark-mode .glass-container {
+            background: var(--bg-dark);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--main-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* 控制按钮 */
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: inherit;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .control-btn:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* 搜索框 */
+        .search-box {
+            width: 90%;
+            max-width: 600px;
+            margin: 24px auto;
+            position: relative;
+        }
+        
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            border-radius: 50px;
+            border: none;
+            background: var(--search-light);
+            font-size: 1rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            transition: var(--transition);
+        }
+        
+        .dark-mode .search-input {
+            background: var(--search-dark);
+            color: var(--text-dark);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            color: var(--main-color);
+            pointer-events: none;
+            font-size: 1.1rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--main-color);
+            transform: scale(1.01);
+        }
+        
+        /* 分类标题 */
+        .category {
+            margin: 32px 0;
+        }
+        
+        .category-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--main-color);
+            display: inline-block;
+            position: relative;
+        }
+        
+        .category-title i {
+            margin-right: 10px;
+            color: var(--main-color);
+        }
+        
+        /* 网站卡片网格 */
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        
+        /* 网站卡片 */
+        .site-card {
+            background: var(--card-light);
+            border-radius: var(--card-border-radius);
+            padding: 20px;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            opacity: var(--card-opacity);
+            box-shadow: var(--card-shadow);
+            will-change: transform;
+        }
+        
+        .dark-mode .site-card {
+            background: var(--card-dark);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .site-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(106, 90, 205, 0.1) 0%, rgba(147, 112, 219, 0.1) 100%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .site-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .site-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* 网站图标容器 */
+        .site-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+            background-color: transparent;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .site-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .site-icon i {
+            font-size: 24px;
+            color: var(--main-color);
+        }
+        
+        .site-card:hover .site-icon {
+            transform: scale(1.05);
+        }
+        
+        .site-name {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+            word-break: break-word;
+            text-align: center;
+        }
+        
+        .site-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dark-mode .site-desc {
+            color: #aaa;
+        }
+        
+        /* 网站卡片操作按钮 */
+        .site-card-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .site-card:hover .site-card-actions {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .action-btn.favorite {
+            color: #e74c3c;
+        }
+        
+        .action-btn.favorite.active {
+            color: #e74c3c;
+        }
+        
+        .action-btn.qrcode {
+            color: #3498db;
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .footer a {
+            color: var(--main-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 公告弹窗样式 */
+        .announcement-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .announcement-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .announcement-content {
+            background: var(--bg-light);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+        
+        .dark-mode .announcement-content {
+            background: var(--bg-dark);
+        }
+        
+        .announcement-modal.show .announcement-content {
+            transform: scale(1);
+        }
+        
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--main-color);
+        }
+        
+        .announcement-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--main-color);
+        }
+        
+        .announcement-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: inherit;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .announcement-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .announcement-body {
+            line-height: 1.6;
+        }
+        
+        .announcement-footer {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .announcement-button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: var(--main-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .announcement-button:hover {
+            background: var(--active-color);
+        }
+        
+        /* 收藏夹弹窗样式 */
+        .favorites-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .favorites-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .favorites-content {
+            background: var(--bg-light);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+        
+        .dark-mode .favorites-content {
+            background: var(--bg-dark);
+        }
+        
+        .favorites-modal.show .favorites-content {
+            transform: scale(1);
+        }
+        
+        .favorites-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--main-color);
+        }
+        
+        .favorites-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--main-color);
+        }
+        
+        .close-favorites {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: inherit;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .close-favorites:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .favorite-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .favorite-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .favorite-item .site-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+        
+        .favorite-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .favorite-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .favorite-url {
+            font-size: 0.8rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .dark-mode .favorite-url {
+            color: #aaa;
+        }
+        
+        .remove-favorite {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 0, 0, 0.2);
+            border: none;
+            color: #ff4444;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .favorite-item:hover .remove-favorite {
+            opacity: 1;
+        }
+        
+        .remove-favorite:hover {
+            background: rgba(255, 0, 0, 0.3);
+        }
+        
+        .empty-favorites {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-favorites i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        /* 统计弹窗样式 */
+        .stats-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .stats-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .stats-content {
+            background: var(--bg-light);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+        
+        .dark-mode .stats-content {
+            background: var(--bg-dark);
+        }
+        
+        .stats-modal.show .stats-content {
+            transform: scale(1);
+        }
+        
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--main-color);
+        }
+        
+        .stats-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--main-color);
+        }
+        
+        .close-stats {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: inherit;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .close-stats:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .stats-section {
+            margin-bottom: 24px;
+        }
+        
+        .stats-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: var(--main-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        
+        .ranking-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .ranking-number {
+            width: 30px;
+            height: 30px;
+            background: var(--main-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .ranking-info {
+            flex: 1;
+        }
+        
+        .ranking-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .ranking-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .dark-mode .ranking-count {
+            color: #aaa;
+        }
+        
+        .search-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 60px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .search-tag:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        
+        /* 二维码弹窗样式 */
+        .qr-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .qr-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .qr-content {
+            background: var(--bg-light);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+        
+        .dark-mode .qr-content {
+            background: var(--bg-dark);
+        }
+        
+        .qr-modal.show .qr-content {
+            transform: scale(1);
+        }
+        
+        .qr-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--main-color);
+        }
+        
+        .qr-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--main-color);
+        }
+        
+        .close-qr {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: inherit;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .close-qr:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        .qr-body {
+            text-align: center;
+        }
+        
+        .qr-info {
+            margin-bottom: 20px;
+        }
+        
+        .qr-info p {
+            margin-bottom: 8px;
+        }
+        
+        .qr-site-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--main-color);
+        }
+        
+        .qr-site-url {
+            font-size: 0.9rem;
+            color: #666;
+            word-break: break-all;
+        }
+        
+        .dark-mode .qr-site-url {
+            color: #aaa;
+        }
+        
+        .qr-code-container {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+        }
+        
+        #qrcode {
+            width: 200px !important;
+            height: 200px !important;
+        }
+        
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 3000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sites-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
+            }
+            
+            .search-box {
+                width: 95%;
+            }
+            
+            .favorites-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .stats-content {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .qr-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sites-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 12px;
+            }
+            
+            .glass-container {
+                padding: 16px;
+                margin: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 背景遮罩 -->
+    <div class="bg-overlay"></div>
+    
+    <!-- 导航栏 -->
+    <header class="navbar glass-container">
+        <div class="logo">
+            <i class="fas fa-tower-broadcast logo-icon"></i>
+            <span>昔涟导航</span>
+        </div>
+        <nav class="nav-controls">
+            <button class="control-btn" id="refreshBtn" title="刷新" aria-label="刷新页面">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button class="control-btn" id="themeToggle" title="切换主题" aria-label="切换主题">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="favoritesBtn" title="收藏夹" aria-label="打开收藏夹">
+                <i class="fas fa-heart"></i>
+            </button>
+            <button class="control-btn" id="statsBtn" title="统计" aria-label="查看统计">
+                <i class="fas fa-chart-bar"></i>
+            </button>
+            <button class="control-btn" id="settingsBtn" title="设置" aria-label="打开设置">
+                <i class="fas fa-cog"></i>
+            </button>
+        </nav>
+    </header>
+    
+    <!-- 搜索框 -->
+    <section class="search-box glass-container">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索网站、资源..." aria-label="搜索网站">
+        </div>
+    </section>
+    
+    <!-- 主要内容 -->
+    <main class="container" id="mainContent">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+        </div>
+    </main>
+    
+    <!-- 收藏夹弹窗 -->
+    <div class="favorites-modal" id="favoritesModal">
+        <div class="favorites-content">
+            <div class="favorites-header">
+                <h2 class="favorites-title"><i class="fas fa-heart"></i> 我的收藏</h2>
+                <button class="close-favorites" id="closeFavorites">&times;</button>
+            </div>
+            <div class="favorites-body" id="favoritesBody">
+                <div class="empty-favorites">
+                    <i class="fas fa-heart-broken"></i>
+                    <p>还没有收藏任何网站</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 统计弹窗 -->
+    <div class="stats-modal" id="statsModal">
+        <div class="stats-content">
+            <div class="stats-header">
+                <h2 class="stats-title"><i class="fas fa-chart-bar"></i> 网站统计</h2>
+                <button class="close-stats" id="closeStats">&times;</button>
+            </div>
+            <div class="stats-body">
+                <div class="stats-section">
+                    <h3><i class="fas fa-fire"></i> 热门排行 TOP 10</h3>
+                    <div class="ranking-list" id="rankingList">
+                        <!-- 排行榜内容将在这里动态生成 -->
+                    </div>
+                </div>
+                <div class="stats-section">
+                    <h3><i class="fas fa-search"></i> 搜索热词</h3>
+                    <div class="search-cloud" id="searchCloud">
+                        <!-- 搜索词云将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 二维码弹窗 -->
+    <div class="qr-modal" id="qrModal">
+        <div class="qr-content">
+            <div class="qr-header">
+                <h2 class="qr-title"><i class="fas fa-qrcode"></i> 扫码访问</h2>
+                <button class="close-qr" id="closeQr">&times;</button>
+            </div>
+            <div class="qr-body">
+                <div class="qr-info">
+                    <p id="qrSiteName">网站名称</p>
+                    <p id="qrSiteUrl">https://example.com</p>
+                </div>
+                <div class="qr-code-container">
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 公告弹窗 -->
+    <div class="announcement-modal" id="announcementModal">
+        <div class="announcement-content">
+            <div class="announcement-header">
+                <h2 class="announcement-title">网站公告</h2>
+                <button class="announcement-close" id="announcementClose">&times;</button>
+            </div>
+            <div class="announcement-body" id="announcementBody">
+                <!-- 公告内容将在这里动态加载 -->
+            </div>
+            <div class="announcement-footer">
+                <button class="announcement-button" id="announcementButton">我知道了</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="footer glass-container">
+        <div class="footer-content">
+            <p>© 2025 昔涟导航 | 由 <a href="https://github.com" target="_blank">GitHub Pages</a> 驱动</p>
+            <p id="siteRuntime"><i class="fas fa-clock"></i> 本站已运行: 加载中...</p>
+            <p id="pageLoadTime"><i class="fas fa-stopwatch"></i> 页面加载耗时: 计算中...</p>
+            <p id="gaokaoCountdown" style="margin-top:8px;font-weight:600;color:var(--main-color);">
+                <i class="fas fa-hourglass-half"></i> 高考倒计时: 计算中...
+            </p>
+            <p><i class="fas fa-code-branch"></i> 版本: v1.0.8</p>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // 网站数据
+        const websitesData = [
+            // 常用网站
+            {title: "Google", url: "https://www.google.com", category: "常用网站", desc: "全球搜索引擎", icon: "fab fa-google"},
+            {title: "GitHub", url: "https://github.com", category: "常用网站", desc: "代码托管平台", icon: "fab fa-github"},
+            {title: "YouTube", url: "https://www.youtube.com", category: "常用网站", desc: "视频分享平台", icon: "fab fa-youtube"},
+            {title: "Twitter", url: "https://twitter.com", category: "常用网站", desc: "社交媒体平台", icon: "fab fa-twitter"},
+            {title: "知乎", url: "https://www.zhihu.com", category: "常用网站", desc: "问答社区", icon: "fas fa-question-circle"},
+            
+            // AI工具
+            {title: "Suno", url: "https://suno.com/", category: "AI工具", desc: "AI音乐生成", icon: "fas fa-music"},
+            {title: "REECHO 睿声", url: "https://dash.reecho.ai/", category: "AI工具", desc: "AI语音合成", icon: "fas fa-microphone"},
+            {title: "AI东雪莲", url: "https://www.modelscope.cn/studios/xzjosh/Azuma-Bert-VITS2", category: "AI工具", desc: "AI语音模型", icon: "fas fa-robot"},
+            {title: "Vocu AI", url: "https://app.vocu.ai/", category: "AI工具", desc: "AI语音合成", icon: "fas fa-microphone-alt"},
+            {title: "秘塔AI搜索", url: "https://metaso.cn/", category: "AI工具", desc: "AI搜索引擎", icon: "fas fa-search"},
+            {title: "AI-ACG绘画", url: "https://ai-acg.com/draw", category: "AI工具", desc: "AI绘画网站", icon: "fas fa-paint-brush"},
+            {title: "触站AI", url: "https://m.czhanai.com/", category: "AI工具", desc: "AI绘图平台", icon: "fas fa-palette"},
+            {title: "LiblibAI", url: "https://www.liblib.art/", category: "AI工具", desc: "AI创作平台", icon: "fas fa-image"},
+            {title: "DeepSeek", url: "https://platform.deepseek.com/usage", category: "AI工具", desc: "AI开放平台", icon: "fas fa-brain"},
+            {title: "ElevenLabs", url: "https://elevenlabs.io/", category: "AI工具", desc: "AI语音生成", icon: "fas fa-microphone-lines"},
+            {title: "Veo 3", url: "https://www.veo3.io/zh", category: "AI工具", desc: "AI视频生成", icon: "fas fa-video"},
+            {title: "ChatGPT Plus Share", url: "https://www.chatshare.me/home", category: "AI工具", desc: "ChatGPT共享", icon: "fas fa-share-alt"},
+            
+            // 学习资源
+            {title: "Coursera", url: "https://www.coursera.org", category: "学习资源", desc: "在线课程平台", icon: "fas fa-graduation-cap"},
+            {title: "Khan Academy", url: "https://www.khanacademy.org", category: "学习资源", desc: "免费教育平台", icon: "fas fa-book"},
+            {title: "Stack Overflow", url: "https://stackoverflow.com", category: "学习资源", desc: "编程问答社区", icon: "fab fa-stack-overflow"},
+            {title: "LeetCode", url: "https://leetcode.com", category: "学习资源", desc: "算法练习平台", icon: "fas fa-code"},
+            {title: "ChemicalBook", url: "https://m.chemicalbook.com/ProductIndex.aspx", category: "学习资源", desc: "化学工具", icon: "fas fa-flask"},
+            {title: "Desmos", url: "https://www.desmos.com/calculator?lang=zh-CN", category: "学习资源", desc: "数学画图工具", icon: "fas fa-calculator"},
+            {title: "图欧学习资源导航", url: "https://tuostudy.upnb.top/", category: "学习资源", desc: "学习资源导航", icon: "fas fa-compass"},
+            {title: "萌娘百科", url: "https://mzh.moegirl.org.cn/Mainpage", category: "学习资源", desc: "ACG百科", icon: "fas fa-book-open"},
+            {title: "Jiumo Search", url: "https://www.jiumodiary.com/", category: "学习资源", desc: "文档搜索引擎", icon: "fas fa-search"},
+            
+            // 工具类
+            {title: "MP4转MP3", url: "https://www.aconvert.com/cn/audio/mp4-to-mp3/", category: "工具类", desc: "音频转换工具", icon: "fas fa-exchange-alt"},
+            {title: "兽音译者", url: "https://roar.iiilab.com/", category: "工具类", desc: "兽音翻译工具", icon: "fas fa-language"},
+            {title: "Wayback Machine", url: "http://web.archive.org/", category: "工具类", desc: "网页时光机", icon: "fas fa-history"},
+            {title: "iLoveIMG", url: "https://www.iloveimg.com/zh-cn", category: "工具类", desc: "图像编辑工具", icon: "fas fa-image"},
+            {title: "C1N短网址", url: "https://www.c1n.cn/", category: "工具类", desc: "短链接生成", icon: "fas fa-link"},
+            {title: "TVBOX源接口", url: "http://www.zmnav.cn/959.html", category: "工具类", desc: "TVBox源", icon: "fas fa-tv"},
+            {title: "在线音调发生器", url: "https://www.onlinemictest.com/zh/tone-generator/", category: "工具类", desc: "音调生成器", icon: "fas fa-music"},
+            {title: "工具哇", url: "https://toolwa.com/", category: "工具类", desc: "在线工具大全", icon: "fas fa-tools"},
+            {title: "即时工具", url: "https://www.67tool.com/", category: "工具类", desc: "在线工具箱", icon: "fas fa-toolbox"},
+            {title: "去手写", url: "https://tool.browser.qq.com/handwriting_erasure", category: "工具类", desc: "手写体去除", icon: "fas fa-eraser"},
+            {title: "站长工具", url: "https://mtool.chinaz.com/", category: "工具类", desc: "站长工具箱", icon: "fas fa-cogs"},
+            {title: "手写体文稿生成器", url: "https://vtool.pro/handwriting/index.html", category: "工具类", desc: "手写体生成", icon: "fas fa-pen-fancy"},
+            {title: "UTF-8编码转换器", url: "https://www.metools.info/code/utf8235.html", category: "工具类", desc: "编码转换工具", icon: "fas fa-code"},
+            {title: "JSON验证工具", url: "https://www.tooljson.com/jsonvalidator", category: "工具类", desc: "JSON验证", icon: "fas fa-check-circle"},
+            {title: "在线LaTeX公式编辑器", url: "https://www.latexlive.com/", category: "工具类", desc: "LaTeX编辑器", icon: "fas fa-square-root-alt"},
+            {title: "图片转提示词", url: "https://imageprompt.org/zh/image-to-prompt", category: "工具类", desc: "图转提示词", icon: "fas fa-image"},
+            {title: "SVG转PNG", url: "https://svgtopng.com/zh/", category: "工具类", desc: "SVG转PNG工具", icon: "fas fa-exchange-alt"},
+            {title: "图片裁剪", url: "https://docsmall.com/image-crop", category: "工具类", desc: "图片裁剪工具", icon: "fas fa-crop"},
+            {title: "刘明野的工具箱", url: "https://tools.liumingye.cn/", category: "工具类", desc: "实用工具箱", icon: "fas fa-wrench"},
+            
+            // 游戏相关
+            {title: "王者荣耀语音", url: "https://voicewiki.cn/wiki/%E9%9F%A9%E4%BF%A1%EF%BC%88%E7%8E%8B%E8%80%85%E8%8D%A3%E8%80%80%EF%BC%89", category: "游戏相关", desc: "游戏语音资源", icon: "fas fa-gamepad"},
+            {title: "Minecraft苦力怕论坛", url: "https://klpbbs.com/forum.php?mod=guide&view=hot&mobile=2", category: "游戏相关", desc: "MC资源论坛", icon: "fas fa-cube"},
+            {title: "MCPEDL", url: "https://mcpedl.org/", category: "游戏相关", desc: "MCPE资源", icon: "fas fa-cube"},
+            {title: "铁锈社区", url: "https://bbs.tiexiu.vip/", category: "游戏相关", desc: "铁锈战争社区", icon: "fas fa-shield-alt"},
+            {title: "末忆-铁锈盒子", url: "http://ww.rtsbox.cn/", category: "游戏相关", desc: "铁锈战争工具", icon: "fas fa-box"},
+            {title: "文明时代2资源站", url: "https://share.aohplayers.com/", category: "游戏相关", desc: "文明时代资源", icon: "fas fa-globe"},
+            {title: "Konmai Academy音游", url: "https://616.sb/", category: "游戏相关", desc: "音游社区", icon: "fas fa-music"},
+            {title: "Phira", url: "https://phira.moe/", category: "游戏相关", desc: "节奏游戏", icon: "fas fa-drum"},
+            {title: "Malody", url: "https://m.mugzone.net/index", category: "游戏相关", desc: "音乐游戏", icon: "fas fa-music"},
+            {title: "泰拉酒馆", url: "https://tlryjg.com/", category: "游戏相关", desc: "泰拉瑞亚攻略", icon: "fas fa-moon"},
+            {title: "宝可梦星云", url: "https://web2.52pokemon.cc/register?code=bhBlEn4q", category: "游戏相关", desc: "宝可梦社区", icon: "fas fa-dragon"},
+            {title: "Human Benchmark", url: "https://humanbenchmark.com/", category: "游戏相关", desc: "能力测试", icon: "fas fa-tachometer-alt"},
+            {title: "A Real Me", url: "https://www.arealme.com/cn", category: "游戏相关", desc: "性格测试", icon: "fas fa-user"},
+            
+            // 网盘存储
+            {title: "网盘用户登录", url: "https://up.woozooo.com/account.php?action=login&ref=/mydisk.php", category: "网盘存储", desc: "蓝奏云", icon: "fas fa-cloud"},
+            {title: "临时网盘", url: "https://ufile.io/", category: "网盘存储", desc: "临时文件存储", icon: "fas fa-clock"},
+            {title: "123云盘", url: "https://www.123pan.com/", category: "网盘存储", desc: "云存储服务", icon: "fas fa-cloud-upload-alt"},
+            {title: "猫狸盘搜", url: "https://www.alipansou.com/", category: "网盘存储", desc: "阿里云盘搜索", icon: "fas fa-search"},
+            {title: "蓝奏云控制台", url: "https://up.woozooo.com/u", category: "网盘存储", desc: "蓝奏云管理", icon: "fas fa-cog"},
+            
+            // 邮箱服务
+            {title: "临时邮箱", url: "https://mail.td/zh", category: "邮箱服务", desc: "一次性邮箱", icon: "fas fa-envelope"},
+            {title: "免费临时邮箱", url: "https://www.igdux.com/tempmail", category: "邮箱服务", desc: "临时邮箱汇总", icon: "fas fa-inbox"},
+            {title: "Emailnator", url: "https://www.emailnator.com/", category: "邮箱服务", desc: "临时邮箱服务", icon: "fas fa-envelope-open"},
+            {title: "Outlook", url: "https://outlook.live.com/mail/0/", category: "邮箱服务", desc: "微软邮箱", icon: "fas fa-envelope"},
+            
+            // 开发者工具
+            {title: "Codeberg", url: "https://codeberg.org/", category: "开发者工具", desc: "代码托管平台", icon: "fab fa-git-alt"},
+            {title: "Gitee", url: "https://gitee.com/", category: "开发者工具", desc: "代码托管平台", icon: "fab fa-git-square"},
+            {title: "CODING", url: "https://pages.coding.net/login", category: "开发者工具", desc: "云端开发平台", icon: "fas fa-code-branch"},
+            {title: "云开发平台", url: "https://tcb.cloud.tencent.com/dev#/overview", category: "开发者工具", desc: "腾讯云开发", icon: "fas fa-cloud"},
+            {title: "Vercel", url: "https://vercel.com/", category: "开发者工具", desc: "前端部署平台", icon: "fas fa-rocket"},
+            {title: "HTML/CSS/JS工具", url: "https://www.jyshare.com/front-end/61/", category: "开发者工具", desc: "前端工具", icon: "fab fa-html5"},
+            {title: "GitHub新建仓库", url: "https://github.com/new", category: "开发者工具", desc: "创建新仓库", icon: "fab fa-github"},
+            
+            // 其他资源
+            {title: "哔哩粉导航", url: "https://520yui940.github.io/bili-nav/", category: "其他资源", desc: "资源聚合导航", icon: "fas fa-star"},
+            {title: "Imgur", url: "https://imgur.com/", category: "其他资源", desc: "图片分享平台", icon: "fas fa-images"},
+            {title: "Urnyx05 GCam", url: "https://www.celsoazevedo.com/files/android/google-camera/dev-urnyx05/", category: "其他资源", desc: "Google相机", icon: "fas fa-camera"},
+            {title: "GLaDOS", url: "https://glados.space/", category: "其他资源", desc: "科学上网工具", icon: "fas fa-globe"},
+            {title: "云猫", url: "https://fnapi.top/src-0-0-5.html", category: "其他资源", desc: "资源分享", icon: "fas fa-cat"},
+            {title: "梓澪の妙妙屋", url: "https://zi0.cc/", category: "其他资源", desc: "Galgame仓库", icon: "fas fa-gamepad"},
+            {title: "紅葉", url: "https://abc.redleaf.app/auth/register?code=9X6hMykJ", category: "其他资源", desc: "云存储服务", icon: "fas fa-leaf"},
+            {title: "AmazFit表盘", url: "https://amazfitwatchfaces.com/", category: "其他资源", desc: "手表表盘下载", icon: "fas fa-clock"},
+            {title: "华为穿戴", url: "https://www.bandbbs.cn/categories/71/", category: "其他资源", desc: "华为手表资源", icon: "fas fa-watch"},
+            {title: "Notion", url: "https://www.notion.so/", category: "其他资源", desc: "笔记协作平台", icon: "fas fa-sticky-note"},
+            {title: "飞书云端", url: "https://cpsovpjbux.feishu.cn/docx/TADXdPdISoMfc6xIKVfcZlO8nve", category: "其他资源", desc: "文档协作", icon: "fas fa-file-alt"},
+            {title: "SiliconCloud", url: "https://m.siliconflow.cn/me/models", category: "其他资源", desc: "AI模型平台", icon: "fas fa-cloud"},
+            {title: "腾讯云", url: "https://cloud.tencent.com/", category: "其他资源", desc: "云计算服务", icon: "fas fa-cloud"},
+            {title: "阿里云", url: "https://cn.aliyun.com/", category: "其他资源", desc: "云计算服务", icon: "fas fa-server"}
+        ];
+        
+        // DOM元素
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const favoritesBtn = document.getElementById('favoritesBtn');
+        const statsBtn = document.getElementById('statsBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const searchInput = document.getElementById('searchInput');
+        const mainContent = document.getElementById('mainContent');
+        const siteRuntime = document.getElementById('siteRuntime');
+        const pageLoadTime = document.getElementById('pageLoadTime');
+        const gaokaoCountdown = document.getElementById('gaokaoCountdown');
+        
+        // 弹窗元素
+        const favoritesModal = document.getElementById('favoritesModal');
+        const statsModal = document.getElementById('statsModal');
+        const qrModal = document.getElementById('qrModal');
+        const announcementModal = document.getElementById('announcementModal');
+        const closeFavorites = document.getElementById('closeFavorites');
+        const closeStats = document.getElementById('closeStats');
+        const closeQr = document.getElementById('closeQr');
+        const announcementClose = document.getElementById('announcementClose');
+        const announcementButton = document.getElementById('announcementButton');
+        
+        // 弹窗内容元素
+        const favoritesBody = document.getElementById('favoritesBody');
+        const rankingList = document.getElementById('rankingList');
+        const searchCloud = document.getElementById('searchCloud');
+        const announcementBody = document.getElementById('announcementBody');
+        const qrSiteName = document.getElementById('qrSiteName');
+        const qrSiteUrl = document.getElementById('qrSiteUrl');
+        
+        // 数据存储
+        let siteClicks = JSON.parse(localStorage.getItem('siteClicks') || '{}');
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        
+        // 高考倒计时功能 - 精确到秒
+        const gaokao = new Date('2026-06-07T09:00:00');
+        function updateGaokaoCountdown() {
+            const now = new Date();
+            const diff = gaokao - now;
+            
+            if (diff <= 0) {
+                gaokaoCountdown.innerHTML = '<i class="fas fa-hourglass-half"></i> 高考加油！你已经上岸啦！';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            gaokaoCountdown.innerHTML = 
+                `<i class="fas fa-hourglass-half"></i> 高考倒计时: ${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+        }
+        
+        // 立即执行并每秒更新
+        updateGaokaoCountdown();
+        setInterval(updateGaokaoCountdown, 1000);
+        
+        // 获取网站图标
+        function getSiteIcon(url, iconClass) {
+            if (iconClass) {
+                return `<i class="${iconClass}"></i>`;
+            }
+            
+            const domain = new URL(url).hostname;
+            return `
+                <img src="https://${domain}/favicon.ico" alt="${domain}" 
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\\'fas fa-globe\\' style=\\'color: var(--main-color)\\'></i>'"
+                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                <i class="fas fa-globe" style="display: none; color: var(--main-color);"></i>
+            `;
+        }
+        
+        // 渲染网站分类
+        function renderCategories() {
+            const fragment = document.createDocumentFragment();
+            const categories = {};
+            
+            websitesData.forEach(site => {
+                if (!categories[site.category]) {
+                    categories[site.category] = [];
+                }
+                categories[site.category].push(site);
+            });
+            
+            for (const [category, sites] of Object.entries(categories)) {
+                const categorySection = document.createElement('section');
+                categorySection.className = 'category glass-container';
+                
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.className = 'category-title';
+                categoryTitle.innerHTML = `<i class="fas fa-folder"></i> ${category}`;
+                
+                const sitesGrid = document.createElement('div');
+                sitesGrid.className = 'sites-grid';
+                sitesGrid.id = category.replace(/\s+/g, '-');
+                
+                const cardsFragment = document.createDocumentFragment();
+                sites.forEach(site => {
+                    const siteCard = document.createElement('a');
+                    siteCard.href = site.url;
+                    siteCard.className = 'site-card';
+                    siteCard.target = '_blank';
+                    siteCard.setAttribute('data-name', site.title.toLowerCase());
+                    siteCard.setAttribute('data-desc', site.desc.toLowerCase());
+                    siteCard.setAttribute('data-url', site.url);
+                    siteCard.setAttribute('data-title', site.title);
+                    siteCard.setAttribute('data-icon', site.icon);
+                    
+                    const isFavorite = favorites.some(fav => fav.url === site.url);
+                    
+                    siteCard.innerHTML = `
+                        <div class="site-card-actions">
+                            <button class="action-btn favorite ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${site.url}', '${site.title}', '${site.icon}'); event.stopPropagation();" title="收藏">
+                                <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                            </button>
+                            <button class="action-btn qrcode" onclick="showQRCode('${site.url}', '${site.title}'); event.stopPropagation();" title="二维码">
+                                <i class="fas fa-qrcode"></i>
+                            </button>
+                        </div>
+                        <div class="site-icon">
+                            ${getSiteIcon(site.url, site.icon)}
+                        </div>
+                        <div class="site-name">${site.title}</div>
+                        <div class="site-desc">${site.desc}</div>
+                    `;
+                    
+                    siteCard.addEventListener('click', function(e) {
+                        if (!e.target.closest('.site-card-actions')) {
+                            updateSiteClicks(site.url);
+                        }
+                    });
+                    
+                    cardsFragment.appendChild(siteCard);
+                });
+                
+                sitesGrid.appendChild(cardsFragment);
+                categorySection.appendChild(categoryTitle);
+                categorySection.appendChild(sitesGrid);
+                fragment.appendChild(categorySection);
+            }
+            
+            mainContent.innerHTML = '';
+            mainContent.appendChild(fragment);
+        }
+        
+        // 收藏夹功能
+        function toggleFavorite(siteUrl, siteTitle, siteIcon) {
+            const index = favorites.findIndex(fav => fav.url === siteUrl);
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showNotification('已从收藏夹移除', 'info');
+            } else {
+                favorites.push({
+                    url: siteUrl,
+                    title: siteTitle,
+                    icon: siteIcon,
+                    addedDate: new Date().toISOString()
+                });
+                showNotification('已添加到收藏夹', 'success');
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            renderCategories();
+        }
+        
+        function renderFavorites() {
+            if (favorites.length === 0) {
+                favoritesBody.innerHTML = `
+                    <div class="empty-favorites">
+                        <i class="fas fa-heart-broken"></i>
+                        <p>还没有收藏任何网站</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const favoritesGrid = document.createElement('div');
+            favoritesGrid.className = 'favorites-grid';
+            
+            favorites.forEach(favorite => {
+                const favoriteItem = document.createElement('div');
+                favoriteItem.className = 'favorite-item';
+                
+                favoriteItem.innerHTML = `
+                    <div class="site-icon">
+                        ${getSiteIcon(favorite.url, favorite.icon)}
+                    </div>
+                    <div class="favorite-info">
+                        <div class="favorite-name">${favorite.title}</div>
+                        <div class="favorite-url">${favorite.url}</div>
+                    </div>
+                    <button class="remove-favorite" onclick="removeFavorite('${favorite.url}')" title="移除收藏">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                favoriteItem.addEventListener('click', function(e) {
+                    if (!e.target.closest('.remove-favorite')) {
+                        window.open(favorite.url, '_blank');
+                    }
+                });
+                
+                favoritesGrid.appendChild(favoriteItem);
+            });
+            
+            favoritesBody.innerHTML = '';
+            favoritesBody.appendChild(favoritesGrid);
+        }
+        
+        function removeFavorite(url) {
+            favorites = favorites.filter(fav => fav.url !== url);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            renderCategories();
+            renderFavorites();
+            showNotification('已从收藏夹移除', 'info');
+        }
+        
+        // 统计功能
+        function updateSiteClicks(siteUrl) {
+            if (!siteClicks[siteUrl]) {
+                siteClicks[siteUrl] = 0;
+            }
+            siteClicks[siteUrl]++;
+            
+            localStorage.setItem('siteClicks', JSON.stringify(siteClicks));
+            updateRanking();
+        }
+        
+        function updateRanking() {
+            const allSites = [];
+            websitesData.forEach(site => {
+                const clicks = siteClicks[site.url] || 0;
+                allSites.push({
+                    ...site,
+                    clicks: clicks
+                });
+            });
+            
+            allSites.sort((a, b) => b.clicks - a.clicks);
+            const topSites = allSites.slice(0, 10);
+            
+            rankingList.innerHTML = '';
+            
+            if (topSites.length === 0) {
+                rankingList.innerHTML = '<p style="text-align: center; color: #666;">暂无数据</p>';
+                return;
+            }
+            
+            topSites.forEach((site, index) => {
+                const rankingItem = document.createElement('div');
+                rankingItem.className = 'ranking-item';
+                
+                rankingItem.innerHTML = `
+                    <div class="ranking-number">${index + 1}</div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">${site.title}</div>
+                        <div class="ranking-count">点击次数: ${site.clicks}</div>
+                    </div>
+                `;
+                
+                rankingList.appendChild(rankingItem);
+            });
+        }
+        
+        function updateSearchCloud() {
+            const wordCount = {};
+            searchHistory.forEach(term => {
+                const words = term.toLowerCase().split(/\s+/);
+                words.forEach(word => {
+                    if (word.length > 1) {
+                        wordCount[word] = (wordCount[word] || 0) + 1;
+                    }
+                });
+            });
+            
+            const sortedWords = Object.entries(wordCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20);
+            
+            searchCloud.innerHTML = '';
+            
+            if (sortedWords.length === 0) {
+                searchCloud.innerHTML = '<p style="text-align: center; color: #666;">暂无搜索记录</p>';
+                return;
+            }
+            
+            sortedWords.forEach(([word, count]) => {
+                const tag = document.createElement('span');
+                tag.className = 'search-tag';
+                tag.textContent = word;
+                tag.style.fontSize = `${0.8 + (count / Math.max(...sortedWords.map(w => w[1]))) * 0.6}rem`;
+                searchCloud.appendChild(tag);
+            });
+        }
+        
+        // 二维码生成功能
+        function showQRCode(siteUrl, siteTitle) {
+            qrSiteName.textContent = siteTitle;
+            qrSiteUrl.textContent = siteUrl;
+            
+            document.getElementById('qrcode').innerHTML = '';
+            
+            new QRCode(document.getElementById('qrcode'), {
+                text: siteUrl,
+                width: 200,
+                height: 200,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            qrModal.classList.add('show');
+        }
+        
+        // 通知功能
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+                color: white;
+                padding: 16px 20px;
+                border-radius: 8px;
+                font-weight: 500;
+                z-index: 3000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // 搜索功能
+        function handleSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const siteCards = document.querySelectorAll('.site-card');
+            
+            if (searchTerm === '') {
+                siteCards.forEach(card => {
+                    card.style.display = 'flex';
+                });
+                return;
+            }
+            
+            // 记录搜索历史
+            if (!searchHistory.includes(searchTerm)) {
+                searchHistory.push(searchTerm);
+                localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+                updateSearchCloud();
+            }
+            
+            siteCards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const desc = card.getAttribute('data-desc');
+                
+                if (name.includes(searchTerm) || desc.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                    card.style.animation = 'none';
+                    setTimeout(() => {
+                        card.style.animation = 'pulse 0.5s';
+                    }, 10);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // 主题切换
+        function toggleTheme() {
+            body.classList.toggle('light-mode');
+            body.classList.toggle('dark-mode');
+            
+            const isDarkMode = body.classList.contains('dark-mode');
+            themeToggle.innerHTML = isDarkMode ? 
+                '<i class="fas fa-sun"></i>' : 
+                '<i class="fas fa-moon"></i>';
+            
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+        
+        // 刷新页面
+        function refreshPage() {
+            refreshBtn.querySelector('i').style.animation = 'spin 1s linear';
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        }
+        
+        // 网站运行时间计算
+        function updateRuntime() {
+            const startDate = new Date('2025-10-23T02:52:00');
+            const now = new Date();
+            const diff = now - startDate;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            siteRuntime.innerHTML = `<i class="fas fa-clock"></i> 本站已运行: ${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+        }
+        
+        // 页面加载时间计算
+        function updateLoadTime() {
+            const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
+            pageLoadTime.innerHTML = `<i class="fas fa-stopwatch"></i> 页面加载耗时: ${loadTime}ms`;
+        }
+        
+        // 公告弹窗功能
+        function showAnnouncement() {
+            announcementBody.innerHTML = `
+                <h3>🎉 欢迎来到昔涟导航！</h3>
+                <p>这是一个精选资源导航站，为您提供常用网站、学习资源、娱乐休闲等分类导航。</p>
+                <p>✨ 新功能：</p>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>📊 热门网站排行榜</li>
+                    <li>❤️ 收藏夹功能</li>
+                    <li>📱 二维码生成器</li>
+                    <li>⏰ 高考倒计时</li>
+                </ul>
+                <p>感谢您的使用！祝您使用愉快！</p>
+            `;
+            
+            announcementModal.classList.add('show');
+        }
+        
+        function closeAnnouncement() {
+            announcementModal.classList.remove('show');
+        }
+        
+        // 事件监听
+        themeToggle.addEventListener('click', toggleTheme);
+        refreshBtn.addEventListener('click', refreshPage);
+        favoritesBtn.addEventListener('click', () => {
+            renderFavorites();
+            favoritesModal.classList.add('show');
+        });
+        statsBtn.addEventListener('click', () => {
+            updateRanking();
+            updateSearchCloud();
+            statsModal.classList.add('show');
+        });
+        settingsBtn.addEventListener('click', () => {
+            showNotification('设置功能开发中...', 'info');
+        });
+        searchInput.addEventListener('input', handleSearch);
+        
+        // 弹窗关闭事件
+        closeFavorites.addEventListener('click', () => {
+            favoritesModal.classList.remove('show');
+        });
+        closeStats.addEventListener('click', () => {
+            statsModal.classList.remove('show');
+        });
+        closeQr.addEventListener('click', () => {
+            qrModal.classList.remove('show');
+        });
+        announcementClose.addEventListener('click', closeAnnouncement);
+        announcementButton.addEventListener('click', closeAnnouncement);
+        
+        // 点击弹窗外部关闭
+        favoritesModal.addEventListener('click', (e) => {
+            if (e.target === favoritesModal) {
+                favoritesModal.classList.remove('show');
+            }
+        });
+        statsModal.addEventListener('click', (e) => {
+            if (e.target === statsModal) {
+                statsModal.classList.remove('show');
+            }
+        });
+        qrModal.addEventListener('click', (e) => {
+            if (e.target === qrModal) {
+                qrModal.classList.remove('show');
+            }
+        });
+        announcementModal.addEventListener('click', (e) => {
+            if (e.target === announcementModal) {
+                closeAnnouncement();
+            }
+        });
+        
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            if (e.key === 'Escape') {
+                if (favoritesModal.classList.contains('show')) {
+                    favoritesModal.classList.remove('show');
+                }
+                if (statsModal.classList.contains('show')) {
+                    statsModal.classList.remove('show');
+                }
+                if (qrModal.classList.contains('show')) {
+                    qrModal.classList.remove('show');
+                }
+                if (announcementModal.classList.contains('show')) {
+                    closeAnnouncement();
+                }
+            }
+        });
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 渲染网站分类
+            renderCategories();
+            
+            // 初始化主题
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            
+            // 显示公告
+            showAnnouncement();
+            
+            // 更新运行时间
+            updateRuntime();
+            setInterval(updateRuntime, 1000);
+            
+            // 页面加载时间
+            window.addEventListener('load', updateLoadTime);
+            
+            // 添加旋转动画样式
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                .loading-spinner {
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid rgba(106, 90, 205, 0.3);
+                    border-top: 4px solid var(--main-color);
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

@@ -1362,6 +1362,9 @@
         let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
         let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
         
+        // 全局配置 - 你的 Worker URL
+        const WORKER_URL = 'https://xilian-nav-stats.2277203229.workers.dev';
+        
         // 高考倒计时功能 - 精确到秒
         const gaokao = new Date('2026-06-07T09:00:00');
         function updateGaokaoCountdown() {
@@ -1457,7 +1460,7 @@
                     
                     siteCard.addEventListener('click', function(e) {
                         if (!e.target.closest('.site-card-actions')) {
-                            updateSiteClicks(site.url);
+                            updateSiteClicks(site.url, site.title);
                         }
                     });
                     
@@ -1547,18 +1550,134 @@
             showNotification('已从收藏夹移除', 'info');
         }
         
-        // 统计功能
-        function updateSiteClicks(siteUrl) {
-            if (!siteClicks[siteUrl]) {
-                siteClicks[siteUrl] = 0;
+        // 全局点击统计功能
+        async function updateSiteClicks(siteUrl, siteTitle) {
+            try {
+                // 防刷机制
+                const lastClickTime = localStorage.getItem(`lastClick:${siteUrl}`) || '0';
+                const now = Date.now();
+                if (now - parseInt(lastClickTime) < 3000) { // 3秒内防刷
+                    console.log('防刷：点击过于频繁');
+                    return;
+                }
+                localStorage.setItem(`lastClick:${siteUrl}`, now.toString());
+                
+                // 发送点击数据到 Cloudflare Worker
+                const response = await fetch(`${WORKER_URL}/api/click`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        siteUrl: siteUrl,
+                        siteTitle: siteTitle
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ 全局点击记录成功:', data);
+                    showNotification('点击已记录', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ 记录全局点击失败:', error);
+                
+                // 降级到本地存储
+                if (!siteClicks[siteUrl]) {
+                    siteClicks[siteUrl] = 0;
+                }
+                siteClicks[siteUrl]++;
+                localStorage.setItem('siteClicks', JSON.stringify(siteClicks));
+                
+                showNotification('使用本地统计', 'info');
             }
-            siteClicks[siteUrl]++;
             
-            localStorage.setItem('siteClicks', JSON.stringify(siteClicks));
+            // 更新排名显示
             updateRanking();
         }
         
-        function updateRanking() {
+        // 全局排名功能
+        async function updateRanking() {
+            const rankingList = document.getElementById('rankingList');
+            
+            try {
+                // 显示加载状态
+                rankingList.innerHTML = '<p style="text-align: center; color: #666;">🔄 正在加载全局排名...</p>';
+                
+                const response = await fetch(`${WORKER_URL}/api/ranking`);
+                
+                if (response.ok) {
+                    const globalRanking = await response.json();
+                    renderGlobalRanking(globalRanking);
+                    return;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ 获取全局排名失败:', error);
+                
+                // 降级到本地排名
+                showNotification('使用本地排名', 'info');
+                renderLocalRanking();
+            }
+        }
+        
+        // 渲染全局排名
+        function renderGlobalRanking(sites) {
+            const rankingList = document.getElementById('rankingList');
+            rankingList.innerHTML = '';
+            
+            if (sites.length === 0) {
+                rankingList.innerHTML = '<p style="text-align: center; color: #666;">暂无数据</p>';
+                return;
+            }
+            
+            // 添加标题
+            const title = document.createElement('p');
+            title.style.cssText = 'text-align: center; color: var(--main-color); margin-bottom: 16px; font-weight: 600;';
+            title.innerHTML = '🌍 全用户热门排行 TOP ' + Math.min(sites.length, 10);
+            rankingList.appendChild(title);
+            
+            // 只显示前10名
+            const topSites = sites.slice(0, 10);
+            
+            topSites.forEach((site, index) => {
+                const rankingItem = document.createElement('div');
+                rankingItem.className = 'ranking-item';
+                
+                // 前三名特殊样式
+                const isTop3 = index < 3;
+                const rankColor = isTop3 ? 'var(--main-color)' : '#999';
+                
+                rankingItem.innerHTML = `
+                    <div class="ranking-number" style="background: ${isTop3 ? 'var(--main-color)' : '#999'}">
+                        ${index + 1}
+                    </div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">${site.title}</div>
+                        <div class="ranking-count" style="color: ${rankColor}">
+                            🔥 ${site.clicks.toLocaleString()} 次点击
+                        </div>
+                    </div>
+                `;
+                
+                rankingList.appendChild(rankingItem);
+            });
+        }
+        
+        // 渲染本地排名（降级方案）
+        function renderLocalRanking() {
+            const rankingList = document.getElementById('rankingList');
+            rankingList.innerHTML = '';
+            
+            // 添加标题
+            const title = document.createElement('p');
+            title.style.cssText = 'text-align: center; color: #999; margin-bottom: 16px; font-weight: 600;';
+            title.innerHTML = '📱 本地热门排行';
+            rankingList.appendChild(title);
+            
             const allSites = [];
             websitesData.forEach(site => {
                 const clicks = siteClicks[site.url] || 0;
@@ -1571,10 +1690,8 @@
             allSites.sort((a, b) => b.clicks - a.clicks);
             const topSites = allSites.slice(0, 10);
             
-            rankingList.innerHTML = '';
-            
             if (topSites.length === 0) {
-                rankingList.innerHTML = '<p style="text-align: center; color: #666;">暂无数据</p>';
+                rankingList.innerHTML += '<p style="text-align: center; color: #666;">暂无数据</p>';
                 return;
             }
             
@@ -1583,10 +1700,14 @@
                 rankingItem.className = 'ranking-item';
                 
                 rankingItem.innerHTML = `
-                    <div class="ranking-number">${index + 1}</div>
+                    <div class="ranking-number" style="background: #999;">
+                        ${index + 1}
+                    </div>
                     <div class="ranking-info">
                         <div class="ranking-name">${site.title}</div>
-                        <div class="ranking-count">点击次数: ${site.clicks}</div>
+                        <div class="ranking-count" style="color: #999;">
+                            📱 ${site.clicks} 次点击
+                        </div>
                     </div>
                 `;
                 
@@ -1755,11 +1876,13 @@
                 <p>这是一个精选资源导航站，为您提供常用网站、学习资源、娱乐休闲等分类导航。</p>
                 <p>✨ 新功能：</p>
                 <ul style="text-align: left; margin-left: 20px;">
-                    <li>📊 热门网站排行榜</li>
+                    <li>🌍 全用户点击排行榜</li>
                     <li>❤️ 收藏夹功能</li>
                     <li>📱 二维码生成器</li>
                     <li>⏰ 高考倒计时</li>
+                    <li>🔍 智能搜索</li>
                 </ul>
+                <p>🚀 现在所有用户的点击都会汇总到全局排行榜！</p>
                 <p>感谢您的使用！祝您使用愉快！</p>
             `;
             
